@@ -63,7 +63,7 @@ module GoogleMapsService::Apis
         mode: nil, waypoints: nil, alternatives: false, avoid: nil,
         language: nil, units: nil, region: nil, departure_time: nil,
         arrival_time: nil, optimize_waypoints: false, transit_mode: nil,
-        transit_routing_preference: nil)
+        transit_routing_preference: nil, return_type: "routes")
 
       params = {
         origin: GoogleMapsService::Convert.waypoint(origin),
@@ -95,7 +95,11 @@ module GoogleMapsService::Apis
       params[:transit_mode] = GoogleMapsService::Convert.join_list("|", transit_mode) if transit_mode
       params[:transit_routing_preference] = transit_routing_preference if transit_routing_preference
 
-      return get('/maps/api/directions/json', params)[:routes]
+      if return_type.to_sym == :all
+        return get('/maps/api/directions/json', params)
+      else
+        return get('/maps/api/directions/json', params)[return_type.to_sym]
+      end
     end
   end
 end
